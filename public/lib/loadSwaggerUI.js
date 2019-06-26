@@ -42,7 +42,17 @@ $(function() {
         $('pre code').each(function(i, e) {
           hljs.highlightBlock(e);
         });
+        // Update token to be used if one is given in parameter
+        // First we check if a token is given
+        // If it is the case we save it to local storage in order to keep native process
 
+        if(window.localStorage && window.location.search) {
+          const params = new URLSearchParams(window.location.search);
+          const access_token = params.get("access_token");
+          if(access_token) {
+            $('#input_accessToken').val(access_token).submit();
+          }
+        }
         // Recover accessToken from localStorage if present.
         if (window.localStorage) {
           var key = window.localStorage.getItem(lsKey);
@@ -61,8 +71,8 @@ $(function() {
       operationsSorter: function(a, b) {
         var pathCompare = a.path.localeCompare(b.path);
         return pathCompare !== 0 ?
-          pathCompare :
-          methodOrder.indexOf(a.method) - methodOrder.indexOf(b.method);
+            pathCompare :
+            methodOrder.indexOf(a.method) - methodOrder.indexOf(b.method);
       },
     });
     /* eslint-disable camelcase */
@@ -85,7 +95,7 @@ $(function() {
     if (key && key.trim() !== '') {
       log('added accessToken ' + key);
       var apiKeyAuth =
-        new SwaggerClient.ApiKeyAuthorization(keyName, key, keyLocation);
+          new SwaggerClient.ApiKeyAuthorization(keyName, key, keyLocation);
       window.swaggerUi.api.clientAuthorizations.add('key', apiKeyAuth);
       accessToken = key;
       $('.accessTokenDisplay').text('Token Set.').addClass('set');
